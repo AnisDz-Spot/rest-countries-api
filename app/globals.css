@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --color-elements: #ffffff; /* Use this for card/input/header BG in Light Mode */
+    --color-background: #fafafa; /* Use this for the main body background in Light Mode */
+    --color-text: #111517;
+    --color-input: #808080;
+    --color-blue-900: #2b3945; /* Dark Mode Elements (Fallback for utilities) */
+    --color-blue-950: #202c37; /* Dark Mode Background (Fallback for utilities) */
+    --color-grey-950: #111517; /* Light Mode Text (Fallback for utilities) */
+    --color-grey-50: #fafafa; /* Light Mode Background (Fallback for utilities) */
+  }
+
+  .dark {
+    /* 💡 Dark Mode Overrides */
+    --color-elements: var(--color-blue-900);
+    --color-background: var(--color-blue-950);
+    --color-text: #ffffff;
+  }
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+
+  @apply transition-colors duration-300;
+  font-family: var(--font-nunito), Arial, Helvetica, sans-serif;
+}
+
+.rc-pagination-dark .rc-pagination-item {
+  background-color: #1e293b; /* slate-800 */
+  border-color: #475569; /* slate-600 */
+}
+
+.rc-pagination-dark .rc-pagination-item a {
+  color: #f8fafc; /* text-gray-50 */
+}
+
+/* Active page style */
+.rc-pagination-dark .rc-pagination-item-active {
+  background-color: #2563eb; /* blue-600 */
+  border-color: #2563eb;
+}
+
+.rc-pagination-dark .rc-pagination-item-active a {
+  color: #ffffff;
+}
+
+.rc-pagination-dark .rc-pagination-disabled a,
+.rc-pagination-dark .rc-pagination-disabled:hover a {
+  color: #64748b; /* slate-500 */
+  border-color: #475569;
+}
