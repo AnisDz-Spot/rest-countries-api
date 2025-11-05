@@ -1,3 +1,5 @@
+// in Page.tsx
+
 import { getCountries } from "@/lib/utils";
 import { CountryData } from "@/types/types";
 import Image from "next/image";
@@ -10,90 +12,140 @@ const Page = async ({ params }: { params: { slug: string } }) => {
   const country = countryDetails?.[0];
 
   if (!country) {
-    return <main className="text-black">Country not found.</main>;
+    return (
+      <main className="text-black text-center py-20 bg-gray-200 dark:bg-blue-950">
+        Country not found.
+      </main>
+    );
   }
 
-  const countryLan = Object.keys(country.languages)[0];
-  const countryCurrency = Object.keys(country.currencies)[0];
+  const countryLan = country.languages
+    ? Object.keys(country.languages)[0]
+    : null;
+  const countryCurrency = country.currencies
+    ? Object.keys(country.currencies)[0]
+    : null;
+
+  const getNativeName = () => {
+    if (!countryLan || !country.name.nativeName?.[countryLan]) return "N/A";
+    return country.name.nativeName[countryLan]?.official || "N/A";
+  };
+
+  const getCurrencyDisplay = () => {
+    if (!countryCurrency || !country.currencies?.[countryCurrency])
+      return "N/A";
+    const currency = country.currencies[countryCurrency];
+    return `${currency.symbol || ""} ${currency.name}`;
+  };
 
   return (
-    <main className="bg-gray-200 dark:bg-blue-950 text-grey-950 dark:text-white w-screen h-[calc(100vh-68px)]">
-      <div className="flex flex-col gap-20 py-10 max-sm:px-5 max-lg:px-10 px-20">
+    <main className="bg-gray-200 dark:bg-blue-950 text-grey-950 dark:text-white min-h-screen">
+      <div className="flex flex-col gap-10 lg:gap-20 py-10 px-6 sm:px-10 lg:px-20">
         <Link
           href="/"
-          className="shadow-2xl bg-gray-600 text-white dark:bg-blue-900 rounded-md w-fit px-6 py-2 hover:bg-blue-800 duration-200"
+          className="shadow-md bg-white dark:bg-blue-900 text-gray-900 dark:text-white rounded-md w-fit px-6 py-2 transition duration-200 hover:shadow-lg"
         >
           ⟵ Back
         </Link>
-        <div className="relative grid lg:grid-cols-2 grid-cols-1 sm:gap-10">
-          <div className="relative w-full sm:col-span-full lg:col-span-1 md:w-[80%] lg:w-full md:mx-auto h-[300px] max-sm:mb-10">
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-20 items-center">
+          {/* Flag Image Container */}
+          <div className="relative w-full aspect-video h-auto mb-8 lg:mb-0 shadow-lg">
             <Image
               src={country.flags.svg}
               alt={`${country.name.common} flag`}
               fill
               priority
-              sizes="
-              (max-width: 768px) 100vw,
-              (max-width: 1024px) 50vw,
-              25vw
-              "
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
             />
           </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-semibold mb-6">
-              {country?.name.official}
+
+          {/* Details Section */}
+          <div className="flex flex-col h-full justify-between">
+            <h1 className="text-2xl sm:text-3xl font-semibold mb-6">
+              {country.name.official}
             </h1>
-            <div className="grid grid-cols-2 w-full gap-x-20 gap-y-5">
-              <p className="text-gray-600 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-300">
-                  Region:{" "}
-                </span>
-                {country.region}
-              </p>
-              <p className="text-gray-600 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-300">
-                  Population:{" "}
-                </span>
-                {country.population}
-              </p>
-              <p className="text-gray-600 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-300">
-                  Capital:{" "}
-                </span>
-                {country.capital[0]}
-              </p>
-              <p className="text-gray-600 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-300">Area: </span>
-                {country.area}
-              </p>
-              <p className="text-gray-600 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-300">
+
+            {/* Country Details Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-x-10 gap-y-3">
+              <p>
+                <span className="font-semibold text-gray-900 dark:text-gray-300">
                   Native Name:{" "}
                 </span>
-                {country.name.nativeName[countryLan].official}
+                <span className="text-gray-600 dark:text-gray-400">
+                  {getNativeName()}
+                </span>
               </p>
-              <p className="text-gray-600 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-300">
+              <p>
+                <span className="font-semibold text-gray-900 dark:text-gray-300">
+                  Population:{" "}
+                </span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {country.population.toLocaleString()}
+                </span>
+              </p>
+              <p>
+                <span className="font-semibold text-gray-900 dark:text-gray-300">
+                  Region:{" "}
+                </span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {country.region}
+                </span>
+              </p>
+              <p>
+                <span className="font-semibold text-gray-900 dark:text-gray-300">
+                  Area:{" "}
+                </span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {country.area.toLocaleString()} km²
+                </span>
+              </p>
+              <p>
+                <span className="font-semibold text-gray-900 dark:text-gray-300">
+                  Capital:{" "}
+                </span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {country.capital?.[0] || "N/A"}
+                </span>
+              </p>
+              <p>
+                <span className="font-semibold text-gray-900 dark:text-gray-300">
                   Currencies:{" "}
                 </span>
-                {`${country.currencies[countryCurrency]?.symbol} ${country.currencies[countryCurrency]?.name}`}
+                <span className="text-gray-600 dark:text-gray-400">
+                  {getCurrencyDisplay()}
+                </span>
               </p>
-              {country.borders.length > 0 && (
-                <ul className="flex items-center col-span-full gap-3 max-lg:relative max-lg:mt-8 absolute bottom-0">
-                  <span className="text-gray-900 dark:text-gray-300">
-                    Borders:{" "}
-                  </span>
+              <p>
+                <span className="font-semibold text-gray-900 dark:text-gray-300">
+                  Languages:{" "}
+                </span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {Object.values(country.languages).join(", ")}
+                </span>
+              </p>
+            </div>
+
+            {/* Border Countries Section */}
+            {country.borders && country.borders.length > 0 && (
+              <div className="flex flex-wrap items-center mt-8 lg:mt-12 w-full gap-3">
+                <span className="font-semibold text-gray-900 dark:text-gray-300 whitespace-nowrap">
+                  Border Countries:
+                </span>
+                <ul className="flex flex-wrap items-center gap-2">
                   {country.borders.map((c, i) => (
                     <li
                       key={i}
-                      className="px-8 py-1 rounded-md bg-blue-900 text-sm text-white hover:bg-blue-800 duration-200"
+                      className="px-4 py-1 rounded-md bg-white dark:bg-blue-900 text-gray-900 dark:text-white text-sm shadow-md transition duration-200"
                     >
                       {c}
                     </li>
                   ))}
                 </ul>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
